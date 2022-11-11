@@ -2,7 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/http"
+
+	"./entity"
+	"./repository"
 )
 
 type Post struct {
@@ -12,37 +16,31 @@ type Post struct {
 }
 
 var (
-	posts []Post
+	repo repository.PostRepository = repository.NewPostRepository()
 )
-
-func init() {
-	posts = []Post{{Id: 1, Title: "Title 1", Text: "Text 1"}}
-}
 
 func GetPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
-	result, err := json.Marshal(posts)
+	posts, err := repo.FindAll()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(`{"error": "Error marshalling the posts array"}`))
-		return
+		w.Write([]byte(`{"error": "Error getting the posts"}`))
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(result)
+	json.NewEncoder(w).Encode(posts)
 }
 
 func AddPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
-	var post Post
+	var post entity.Post
 	err := json.NewDecoder(r.Body).Decode(&post)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(`{"error": "Error unmarshalling the request"}`))
 		return
 	}
-	post.Id = len(posts) + 1
-	posts = append(posts, post)
+	post.ID = rand.Int63()
+	repo.Save(&post)
 	w.WriteHeader(http.StatusCreated)
-	result, err := json.Marshal(post)
-	w.Write(result)
+	json.NewEncoder(w).Encode(post)
 }
