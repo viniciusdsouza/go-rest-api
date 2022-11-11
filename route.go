@@ -32,6 +32,7 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "application/json")
 	var post Post
 	err := json.NewDecoder(r.Body).Decode(&post)
 	if err != nil {
