@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"../entity"
+	"github.com/viniciusdsouza/go-rest-api/entity"
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 )

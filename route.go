@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"net/http"
 
-	"./entity"
-	"./repository"
+	"github.com/viniciusdsouza/go-rest-api/entity"
+	"github.com/viniciusdsouza/go-rest-api/repository"
 )
 
 type Post struct {
