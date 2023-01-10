@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/viniciusdsouza/go-rest-api/entity"
 	"github.com/viniciusdsouza/go-rest-api/errors"
@@ -24,6 +25,7 @@ var (
 type PostController interface {
 	GetPosts(w http.ResponseWriter, r *http.Request)
 	AddPost(w http.ResponseWriter, r *http.Request)
+	GetByIdPost(w http.ResponseWriter, r *http.Request)
 }
 
 func NewPostController(service service.PostService) PostController {
@@ -66,4 +68,16 @@ func (*controller) AddPost(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(result)
+}
+
+func (*controller) GetByIdPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "application/json")
+	param, _ := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
+	post, err := postService.FindOnebyId(param)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(errors.ServiceError{Message: "Error getting the post"})
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(post)
 }
