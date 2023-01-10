@@ -24,6 +24,12 @@ func (repositoryMock *PostRepositoryMock) FindAll() ([]entity.Post, error) {
 	return result.([]entity.Post), args.Error(1)
 }
 
+func (repositoryMock *PostRepositoryMock) FindOneById(id int64) (*entity.Post, error) {
+	args := repositoryMock.Called()
+	result := args.Get(0)
+	return result.(*entity.Post), args.Error(1)
+}
+
 func TestFindAll(t *testing.T) {
 	repositoryMock := new(PostRepositoryMock)
 
@@ -71,6 +77,31 @@ func TestCreate(t *testing.T) {
 	assert.Equal(t, post.Title, result.Title)
 	assert.Equal(t, post.Text, result.Text)
 	assert.Nil(t, err)
+}
+func TestFindOnebyId(t *testing.T) {
+	repositoryMock := new(PostRepositoryMock)
+
+	var id int64 = 1
+
+	// Setup expectations
+	post := entity.Post{
+		ID:    id,
+		Title: "Teste",
+		Text:  "Testando",
+	}
+	repositoryMock.On("FindOneById").Return(&post, nil)
+
+	testService := NewPostService(repositoryMock)
+
+	result, _ := testService.FindOnebyId(id)
+
+	// Mock Assertion: Behavioral
+	repositoryMock.AssertExpectations(t)
+
+	// Data Assertion
+	assert.Equal(t, post.ID, result.ID)
+	assert.Equal(t, post.Title, result.Title)
+	assert.Equal(t, post.Text, result.Text)
 }
 
 func TestValidateEmptyPost(t *testing.T) {
