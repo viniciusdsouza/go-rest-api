@@ -8,5 +8,3 @@ type Router interface {
 	GETBYID(uri string, f func(w http.ResponseWriter, r *http.Request))
 	SERVE(port string)
 }
-
-
