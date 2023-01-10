@@ -18,7 +18,7 @@ type Post struct {
 type controller struct{}
 
 var (
-	postService service.PostService = service.NewPostService()
+	postService service.PostService
 )
 
 type PostController interface {
@@ -26,7 +26,8 @@ type PostController interface {
 	AddPost(w http.ResponseWriter, r *http.Request)
 }
 
-func NewPostController() PostController {
+func NewPostController(service service.PostService) PostController {
+	postService = service
 	return &controller{}
 }
 
