@@ -23,6 +23,9 @@ func (*chiRouter) GET(uri string, f func(w http.ResponseWriter, r *http.Request)
 func (*chiRouter) POST(uri string, f func(w http.ResponseWriter, r *http.Request)) {
 	chiDispatcher.Post(uri, f)
 }
+func (*chiRouter) GETBYID(uri string, f func(w http.ResponseWriter, r *http.Request)) {
+	chiDispatcher.Get(uri, f)
+}
 func (*chiRouter) SERVE(port string) {
 	fmt.Printf("Chi HTTP Server running on port %v", port)
 	http.ListenAndServe(port, chiDispatcher)
